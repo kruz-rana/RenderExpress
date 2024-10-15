@@ -1,0 +1,24 @@
+{
+  "name": "renderexpress",
+  "version": "1.0.0",
+  "description": "Render deployement",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kruz-rana/RenderExpress.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kruz-rana/RenderExpress/issues"
+  },
+  "homepage": "https://github.com/kruz-rana/RenderExpress#readme",
+  "dependencies": {
+    "express": "^4.21.1"
+  }
+}
