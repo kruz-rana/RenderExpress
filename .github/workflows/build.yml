@@ -1,7 +1,32 @@
-on: push
+name: CI for Render Web Service
+
+on:
+  push:
+    branches:
+      - main # This will trigger the workflow on pushes to the main branch
+
 jobs:
-  first-job:
-    runs-on: windows-latest
+  build:
+    runs-on: ubuntu-latest # Use Ubuntu to run Node.js commands
     steps:
-      - run: node --version
-      - run: npm --version
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Set up Node.js environment (specify the version you're using on Render)
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14.x" # Match the Node.js version you're using in Render
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Check Node.js and NPM versions
+      - name: Check Node.js and NPM versions
+        run: |
+          node --version
+          npm --version
+
+      # (Optional) Additional steps if needed for checking the build status or other configurations
