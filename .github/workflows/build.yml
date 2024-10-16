@@ -1,32 +1,32 @@
-name: CI for Render Web Service
+name: Deploy to Render
 
 on:
   push:
     branches:
-      - main # This will trigger the workflow on pushes to the main branch
+      - main # Triggers deployment on pushes to the main branch
 
 jobs:
-  build:
-    runs-on: ubuntu-latest # Use Ubuntu to run Node.js commands
+  deploy:
+    runs-on: ubuntu-latest
     steps:
-      # Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Set up Node.js environment (specify the version you're using on Render)
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
           node-version: "14.x" # Match the Node.js version you're using in Render
 
-      # Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Check Node.js and NPM versions
-      - name: Check Node.js and NPM versions
+      - name: Trigger Render Deployment
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
         run: |
-          node --version
-          npm --version
-
-      # (Optional) Additional steps if needed for checking the build status or other configurations
+          curl -X POST \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"serviceId": "'"$RENDER_SERVICE_ID"'", "branch": "main"}' \
+            https://api.render.com/v1/deploys
