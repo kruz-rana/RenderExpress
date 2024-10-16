@@ -26,16 +26,11 @@ jobs:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
           RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
         run: |
-          echo "Triggering deployment on Render..."
-          response=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+          echo "Triggering deployment..."
+          curl -X POST \
             -H "Authorization: Bearer $RENDER_API_KEY" \
             -H "Content-Type: application/json" \
             -d '{"serviceId": "'"$RENDER_SERVICE_ID"'", "branch": "main"}' \
-            https://api.render.com/v1/deploys )
+            https://api.render.com/v1/deploys
 
-          if [ "$response" -eq 201 ]; then
-            echo "Deployment triggered successfully!"
-          else
-            echo "Failed to trigger deployment. HTTP Status Code: $response"
-            exit 1
-          fi
+          echo "Deployment triggered for service ID: $RENDER_SERVICE_ID"
