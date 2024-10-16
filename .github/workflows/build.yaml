@@ -7,6 +7,7 @@ on:
 
 jobs:
   deploy:
+    name: Deploy
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -15,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "14.x" # Match the Node.js version you're using in Render
+          node-version: "18.x" # Match the Node.js version you're using in Render
 
       - name: Install dependencies
         run: npm install
