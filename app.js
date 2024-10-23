@@ -3,6 +3,7 @@ const app = express();
 const port = process.env.PORT || 4000;
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUI = require('swagger-ui-express');
+const cors = require('cors');
 
 const swaggerOptions = {
   swaggerDefinition: {
@@ -17,6 +18,7 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 console.log(swaggerDocs);
 
+app.use(cors());
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 /**
  * @swagger
