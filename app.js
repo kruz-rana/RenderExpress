@@ -4,6 +4,23 @@ const port = process.env.PORT || 4000;
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUI = require('swagger-ui-express');
 const cors = require('cors');
+const sql = require('mysql2');
+require('dotenv').config();
+
+const db = sql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+});
+
+db.connect((err) => {
+  if (err) {
+    console.error('Error connecting to db : ', err);
+    return;
+  }
+  console.log('Connected to MYSQL db');
+})
 
 const swaggerOptions = {
   swaggerDefinition: {
@@ -12,7 +29,7 @@ const swaggerOptions = {
       version: '1.0.0',
     },
   },
-  apis: ['app.js'], // files containing annotations as above
+  apis: ['app.js'], // files containing annotations as 
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
@@ -20,15 +37,6 @@ console.log(swaggerDocs);
 
 app.use(cors());
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
-/**
- * @swagger
- * /books:
- *    get:
- *      description: Get all books
- *      responses: 
- *        200:
- *          description: Success
- */
 
 app.get('/', (req, res) => {
   const url = `${req.protocol}://${req.get('host')}${req.originalUrl}api-docs`;
@@ -86,13 +94,67 @@ app.get('/', (req, res) => {
   res.type('html').send(html);
 });
 
+
+/**
+ * @swagger
+ * /books:
+ *   get:
+ *     summary: Get all books
+ *     description: Retrieve a list of books from the database
+ *     responses:
+ *       200:
+ *         description: A list of books
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   name:
+ *                     type: string
+ */
 app.get('/books', (req, res) => {
-  res.send([
-    {
-      id: 1,
-      title: "Harry Porter"
+  db.query('select * from book', (err, result) => {
+    if (err) {
+      console.error('Error fetching books:', err);
+      return res.status(500).json({ error: 'Failed to fetch books' });
     }
-  ])
+    res.json(result);
+  })
+})
+
+/**
+ * @swagger
+ * /authors:
+ *  get:
+ *    summary: Get all authors
+ *    description: Retrive a list of authors from database 
+ *    responses:
+ *      200:
+ *        description : list of authors
+ *        content: 
+ *          application/json:
+ *            schema:
+ *              type: array
+ *              properties :
+ *                id:
+ *                  type: integer
+ *                name:
+ *                  type: string 
+ *      500:
+ *        description : list of authors
+ */
+app.get('/authors', (req, res) => {
+  db.query('select * from author', (err, result) => {
+    if (err) {
+      console.error('Error fetching author:', err);
+      return res.stutus(500).json({ error: 'Failed to fetch authors' });
+    }
+    res.json(result);
+  })
 })
 
 const server = app.listen(port, () => {
